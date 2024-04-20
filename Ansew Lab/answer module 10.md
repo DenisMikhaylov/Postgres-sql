@@ -60,27 +60,43 @@ HAVING SUM(od.qty * p.price_value) > 10000) AS combined_data
 
 --<<Задача 4>>--
 
-SELECT c.client_login, c.firstname
-FROM shop.client c
-INNER JOIN (SELECT om.client_login, SUM(od.qty * p.price_value) AS total_sales
-    FROM shop.order_main om
-	LEFT JOIN shop.order_detail od ON om.order_id = od.order_id
-	LEFT JOIN book_store.price p ON od.book_id = p.book_id
-    WHERE EXTRACT(YEAR FROM om.order_date) = 2019
-    GROUP BY om.client_login
-    ORDER BY total_sales DESC
-    LIMIT 10) s2019 ON c.client_login = s2019.client_login
-UNION
-SELECT c.client_login, c.firstname
-FROM shop.client c
-INNER JOIN (SELECT om.client_login, SUM(od.qty * p.price_value) AS total_sales
-    FROM shop.order_main om
-	LEFT JOIN shop.order_detail od ON om.order_id = od.order_id
-	LEFT JOIN book_store.price p ON od.book_id = p.book_id
-    WHERE EXTRACT(YEAR FROM om.order_date) = 2020
-    GROUP BY om.client_login
-    ORDER BY total_sales DESC
-    LIMIT 10) s2020 ON c.client_login = s2020.client_login
+select * from (
+select
+ c.client_login ,
+ c.firstname 
+from
+ shop.order_main om
+join shop.order_detail od
+on
+ od.order_id = om.order_id
+join book_store.price p on
+ p.book_id = od.book_id
+join shop.client c on
+ c.client_login = om.client_login
+where date_part ('year', om.order_date) = 2019
+ group by
+ c.client_login
+order  by sum(od.qty * p.price_value) desc 
+limit 10) as d1
+union 
+select * from (select
+ c.client_login ,
+ c.firstname 
+from
+ shop.order_main om
+join shop.order_detail od
+on
+ od.order_id = om.order_id
+join book_store.price p on
+ p.book_id = od.book_id
+join shop.client c on
+ c.client_login = om.client_login
+where date_part ('year', om.order_date) = 2020
+ group by
+ c.client_login
+order  by sum(od.qty * p.price_value) desc 
+limit 10) as d2
+
 
 --<<Задача 5>>--
 
