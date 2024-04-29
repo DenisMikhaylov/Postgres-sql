@@ -1,3 +1,7 @@
+Модуль 4
+
+Задача 1
+
 ```
 Select
   b.book_name
@@ -6,15 +10,16 @@ from book_store.book b
 	left join book_store.price p 
 		on b.book_id = p.book_id 
 ```
-
+Задача 2
 
 ```
-select book_store.book.book_id 
-, book_store.book_author.author_id
-from book_store.book
-	inner join book_store.book_author 
-		on book_store.book_author.book_id = book_store.book.book_id
+select
+book_store.book.book_id ,
+author_id
+from book_store.book  
+inner join book_store.book_author  on book_store.book_author.book_id = book_store.book.book_id
 ```
+Задача 3
 
 ```
 Select
@@ -24,6 +29,7 @@ from book_store.book b
 	left join book_store.book_author ba
 		on ba.book_id = b.book_id
 ```
+Задача 4
 
 ```
 Select
@@ -38,6 +44,9 @@ from book_store.book b
 		on ba.author_id = a.author_id 
 
 ```
+
+Задача 5
+
 ```
 Select
   genre_id
@@ -45,6 +54,7 @@ Select
   ,genre_name
 FROM book_store.genre;
 ```
+Задача 6
 ```
 Select
   h.genre_id
@@ -55,6 +65,8 @@ FROM book_store.genre as g
 	join book_store.genre as h 
 		on g.genre_id = h.genre_id
 ```
+
+Задача 7
 ```
 Select
   c.firstname
