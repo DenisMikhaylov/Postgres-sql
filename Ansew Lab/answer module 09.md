@@ -1,4 +1,6 @@
--- 1
+Модуль 9
+1
+```
 CREATE VIEW shop.book_vip
 AS (
 	SELECT b.id book_id, b.name book_name, p.price_value
@@ -8,19 +10,23 @@ AS (
 	JOIN BookStore.price_categories pc
 		ON p.price_category_no = pc.price_category_no
 	WHERE pc.price_category_name = 'Цена VIP клиента'
-);
+)
+```
 
--- 2
+2
+```
 SELECT v_books.book_id, v_books.book_name, v_books.price_value
 FROM shop.book_vip v_books
 WHERE v_books.book_id = 6
+```
 
--- 3
+3
+```
 SELECT book.book_id, book.book_name
 FROM (
 	SELECT b.id book_id, b.name book_name,
 		p.price_value,
-		CASE WHEN price_value > 500
+		CASE WHEN p.price_value > 500
 			THEN 'high'
 			ELSE 'normal'
 		END price_type
@@ -29,20 +35,9 @@ FROM (
 		ON b.id = p.book_id
 ) book
 WHERE price_type = 'high'
-
--- 4
-SELECT c.client_login
-	, sum(NULLIF(od.qty, 0) * p.price_value) totalsalesamount
-	, avg(NULLIF(od.qty, 0) * p.price_value) avgsalesamount
-FROM shop.client c
-LEFT JOIN shop.order_main om
-	ON c.client_login = om.client_login
-LEFT JOIN shop.order_detail od
-	ON om.order_id = od.order_id
-JOIN BookStore.price p
-	ON od.price_category_no = p.price_category_no
-GROUP BY c.client_login
--- OR
+```
+4
+```
 SELECT client_login 
 	, total_sum totalsalesamount
 	, total_sum / total_orders avgsalesamount
@@ -59,8 +54,9 @@ FROM (
 		ON od.price_category_no = p.price_category_no
 	GROUP BY om.client_login
 ) tmp;
-
--- 5
+```
+5
+```
 WITH bookBeverages AS (
 	SELECT om.client_login
 		, count(*) total_orders
@@ -78,8 +74,9 @@ SELECT client_login
 	, total_sum totalsalesamount
 	, total_sum / total_orders avgsalesamount
 FROM bookBeverages;
-
--- 6
+```
+6
+```
 WITH c2020 AS (
 	SELECT om.client_login
 		, sum(NULLIF(od.qty, 0) * p.price_value) AS salesamt2020
@@ -94,10 +91,12 @@ WITH c2020 AS (
 	GROUP BY om.client_login
 )
 SELECT c.client_login, c.lastname, salesamt2020
-FROM c2020
-JOIN shop.client c USING (client_login);
-
--- 7
+FROM c2020 
+left join shop.client c
+	on c.client_login=c2020.client_login;
+```
+7
+```
 WITH sales2019 AS (
 	SELECT c.client_login
 		, (
@@ -134,11 +133,12 @@ SELECT client_login, lastname
 	, sales2020.amount salesamt2020
 	, NULLIF ((sales2020.amount - sales2019.amount) / sales2019.amount * 100, 0) pecent_up
 FROM shop.client c 
-JOIN sales2019 USING (client_login)
-JOIN sales2020 USING (client_login)
-ORDER BY NULLIF ((sales2020.amount - sales2019.amount) / sales2019.amount * 100, 0);
-
--- 8
+LEFT JOIN sales2019 on c.client_login=c2029.client_login
+LEFT JOIN sales2020 on c.client_login=c2020.client_login
+ORDER BY pecent_up;
+```
+8
+```
 CREATE OR REPLACE VIEW shop.order_values AS (
 	SELECT client_login
 		, sum(NULLIF (od.qty, 0) * p.price_value) totalsalesamount
@@ -156,19 +156,21 @@ CREATE OR REPLACE FUNCTION shop.fnGetSalesByCustomer(orderyear int)
 RETURNS TABLE (client_login varchar, totalsalesamount NUMERIC)
 LANGUAGE plpgsql
 AS
-$body$
+$$
 	BEGIN
 		RETURN QUERY
 			SELECT ov.client_login, ov.totalsalesamount
 			FROM shop.order_values ov
 			WHERE ov.order_year = orderyear;
 	END;
-$body$;
-
--- 9
+$$;
+```
+9
+```
 SELECT * FROM shop.fnGetSalesByCustomer(2019);
-
--- 10
+```
+10
+```
 CREATE TABLE call_log
 (
 	call_id serial PRIMARY KEY,
@@ -333,3 +335,4 @@ SELECT cl.subscriber_id
 FROM call_log cl
 GROUP BY cl.subscriber_id
 ORDER BY cl.subscriber_id;
+```
