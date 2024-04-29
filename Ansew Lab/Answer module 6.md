@@ -1,3 +1,5 @@
+Модуль 6
+Задание 1
 ```
 Select
   om.client_login
