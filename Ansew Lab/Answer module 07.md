@@ -6,7 +6,6 @@
 select 
 om.client_login
 , c.firstname
-,
 from shop.order_main om 
 	join shop.client c 
 		on c.client_login =om.client_login 
