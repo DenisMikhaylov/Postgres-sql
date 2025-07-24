@@ -8,9 +8,9 @@ SELECT b.book_id, b.book_name
 FROM book_store.book b
 LEFT JOIN book_store.price p ON b.book_id = p.book_id
 WHERE p.price_category_no = 1
-
+```
 --<<Задача 2>>--
-
+```
 SELECT b.book_id, b.book_name
 FROM book_store.book b
 LEFT JOIN shop.order_detail od ON b.book_id = od.book_id
